@@ -1,27 +1,16 @@
 import type { Metadata, Viewport } from "next";
-import {
-  Playfair_Display,
-  Cormorant_Garamond,
-  Hanken_Grotesk,
-} from "next/font/google";
+import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
-const playfair = Playfair_Display({
+const fraunces = Fraunces({
   subsets: ["latin"],
-  weight: ["500", "600", "700", "800"],
+  weight: ["500", "600", "700", "800", "900"],
+  style: ["normal", "italic"],
   variable: "--font-playfair",
   display: "swap",
 });
 
-const cormorant = Cormorant_Garamond({
-  subsets: ["latin"],
-  weight: ["500", "600"],
-  style: ["normal", "italic"],
-  variable: "--font-cormorant",
-  display: "swap",
-});
-
-const hanken = Hanken_Grotesk({
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
   variable: "--font-hanken",
@@ -61,10 +50,11 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="h-full">
-      <body
-        className={`${playfair.variable} ${cormorant.variable} ${hanken.variable} min-h-full antialiased`}
-      >
+    <html
+      lang="en"
+      className={`${fraunces.variable} ${jakarta.variable} h-full`}
+    >
+      <body className="min-h-full antialiased">
         {children}
       </body>
     </html>

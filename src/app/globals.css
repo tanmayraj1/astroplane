@@ -72,9 +72,9 @@
   --shadow-float: 0 34px 70px rgba(35, 32, 58, 0.35);
 
   /* Type */
-  --font-display: var(--font-playfair), "Playfair Display", serif;
-  --font-accent: var(--font-cormorant), "Cormorant Garamond", serif;
-  --font-ui: var(--font-hanken), "Hanken Grotesk", sans-serif;
+  --font-display: var(--font-playfair), "Fraunces", serif;
+  --font-accent: var(--font-playfair), "Fraunces", serif;
+  --font-ui: var(--font-hanken), "Plus Jakarta Sans", sans-serif;
 }
 
 @theme inline {

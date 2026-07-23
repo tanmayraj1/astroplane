@@ -1,0 +1,15 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "astroplane",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
+      "port": 3000,
+      "cwd": "/Users/tanmayraj/Documents/Astro_Planner/astroplane"
+    }
+  ]
+}

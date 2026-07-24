@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui";
@@ -13,40 +14,44 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
   const next = search.get("next") ?? "/today";
 
   const [email, setEmail] = useState("");
-  const [code, setCode] = useState("");
-  const [stage, setStage] = useState<"email" | "code">("email");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function sendCode(e: React.FormEvent) {
+  async function submit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
     setError(null);
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: { shouldCreateUser: true },
-    });
-    setBusy(false);
-    if (error) setError(error.message);
-    else setStage("code");
-  }
 
-  async function verifyCode(e: React.FormEvent) {
-    e.preventDefault();
-    setBusy(true);
-    setError(null);
-    const { error } = await supabase.auth.verifyOtp({
-      email,
-      token: code.trim(),
-      type: "email",
-    });
-    setBusy(false);
-    if (error) {
-      setError("That code didn't match — check the email and try again.");
+    if (mode === "sign-up") {
+      const { error } = await supabase.auth.signUp({ email, password });
+      if (error) {
+        setBusy(false);
+        setError(
+          error.message.includes("already registered")
+            ? "That email already has an account — sign in instead."
+            : error.message
+        );
+        return;
+      }
     } else {
-      router.push(next);
-      router.refresh();
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) {
+        setBusy(false);
+        setError(
+          error.message === "Invalid login credentials"
+            ? "Email or password didn't match — try again."
+            : error.message
+        );
+        return;
+      }
     }
+    router.push(next);
+    router.refresh();
   }
 
   async function withGoogle() {
@@ -66,54 +71,64 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
         {mode === "sign-in" ? "Your sky is waiting." : "Where the sky begins."}
       </h1>
       <p className="mt-1.5 text-[12.5px] leading-relaxed text-body">
-        {stage === "email"
-          ? "We'll email you a six-digit code — no password to remember."
-          : `Enter the code we sent to ${email}.`}
+        {mode === "sign-in"
+          ? "Sign in with your email and password."
+          : "Create your account — free forever tier, no card needed."}
       </p>
 
-      {stage === "email" ? (
-        <form onSubmit={sendCode} className="mt-5 flex flex-col gap-3">
-          <label className="block">
-            <span className="mb-1.5 block text-[9.5px] font-bold uppercase tracking-[2px] text-gold">
-              Email
-            </span>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              className="w-full rounded-[14px] border border-line bg-surface-alt px-4 py-3 text-[14px] text-ink outline-none placeholder:text-faint focus:border-gold"
-            />
-          </label>
-          <Button type="submit" disabled={busy || !email} className="mt-1 w-full">
-            {busy ? "Sending…" : "Send code"}
-          </Button>
-        </form>
-      ) : (
-        <form onSubmit={verifyCode} className="mt-5 flex flex-col gap-3">
+      <form onSubmit={submit} className="mt-5 flex flex-col gap-3">
+        <label className="block">
+          <span className="mb-1.5 block text-[9.5px] font-bold uppercase tracking-[2px] text-gold">
+            Email
+          </span>
           <input
-            inputMode="numeric"
-            autoComplete="one-time-code"
-            maxLength={6}
+            type="email"
             required
-            value={code}
-            onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
-            placeholder="••••••"
-            className="tnum w-full rounded-[14px] border border-line bg-surface-alt px-4 py-3 text-center text-[22px] font-bold tracking-[8px] text-ink outline-none placeholder:text-faint focus:border-gold"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            className="w-full rounded-[14px] border border-line bg-surface-alt px-4 py-3 text-[14px] text-ink outline-none placeholder:text-faint focus:border-gold"
           />
-          <Button type="submit" disabled={busy || code.length !== 6} className="w-full">
-            {busy ? "Checking…" : "Enter Astroplane"}
-          </Button>
-          <button
-            type="button"
-            onClick={() => setStage("email")}
-            className="text-[11.5px] font-semibold text-muted hover:text-ink"
-          >
-            Use a different email
-          </button>
-        </form>
-      )}
+        </label>
+        <label className="block">
+          <span className="mb-1.5 block text-[9.5px] font-bold uppercase tracking-[2px] text-gold">
+            Password
+          </span>
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              required
+              minLength={6}
+              autoComplete={mode === "sign-up" ? "new-password" : "current-password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder={mode === "sign-up" ? "At least 6 characters" : "Your password"}
+              className="w-full rounded-[14px] border border-line bg-surface-alt px-4 py-3 pr-16 text-[14px] text-ink outline-none placeholder:text-faint focus:border-gold"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((s) => !s)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-[10.5px] font-bold uppercase tracking-[1px] text-muted hover:text-ink"
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
+          </div>
+        </label>
+        <Button
+          type="submit"
+          disabled={busy || !email || password.length < 6}
+          className="mt-1 w-full"
+        >
+          {busy
+            ? mode === "sign-up"
+              ? "Creating…"
+              : "Signing in…"
+            : mode === "sign-up"
+              ? "Cast my chart"
+              : "Enter Astroplane"}
+        </Button>
+      </form>
 
       {error && (
         <p className="mt-3 rounded-[10px] bg-[rgba(192,90,59,.1)] px-3 py-2 text-[11.5px] font-semibold text-clay">
@@ -155,7 +170,21 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
 
       <p className="mt-5 flex items-center justify-center gap-1.5 text-[10.5px] font-semibold text-faint">
         <SparkleIcon size={10} className="text-gold" />
-        {mode === "sign-in" ? "New here? The habit is free." : "Free forever tier — no card needed."}
+        {mode === "sign-in" ? (
+          <>
+            New here?{" "}
+            <Link href="/sign-up" className="font-bold">
+              Create an account
+            </Link>
+          </>
+        ) : (
+          <>
+            Already have one?{" "}
+            <Link href="/sign-in" className="font-bold">
+              Sign in
+            </Link>
+          </>
+        )}
       </p>
     </div>
   );

@@ -168,7 +168,7 @@ export function ChatClient({
     : null;
 
   return (
-    <div className="fixed inset-0 z-40 flex flex-col bg-page lg:relative lg:z-auto lg:h-[calc(100dvh)] lg:bg-transparent">
+    <div className="fixed inset-0 z-50 flex flex-col bg-page lg:relative lg:z-auto lg:h-[calc(100dvh)] lg:bg-transparent">
       {/* Glass header */}
       <header className="glass-header flex items-center gap-3 border-b border-line px-4 pb-3 pt-[52px] lg:pt-4">
         <Link

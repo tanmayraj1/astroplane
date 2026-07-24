@@ -32,10 +32,10 @@ export default async function MarketingLayout({
             </Link>
           </nav>
           <Link
-            href={user ? "/today" : "/sign-in"}
+            href={user ? "/today" : "/sign-up"}
             className="pressable rounded-full bg-ink px-5 py-2.5 text-[12.5px] font-bold text-cream"
           >
-            {user ? "Open the app" : "Sign in"}
+            {user ? "Open the app" : "Get started"}
           </Link>
         </div>
       </header>

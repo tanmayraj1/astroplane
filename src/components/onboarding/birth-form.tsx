@@ -52,7 +52,15 @@ export function BirthForm() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!place) {
+    // Typed a place but never tapped a suggestion — take the top match.
+    let chosen = place;
+    if (!chosen && suggestions.length > 0) {
+      chosen = suggestions[0];
+      setPlace(chosen);
+      setPlaceQuery(chosen.label);
+      setOpen(false);
+    }
+    if (!chosen) {
       setError("Pick your birth place from the suggestions so we can locate your sky.");
       return;
     }
@@ -63,10 +71,10 @@ export function BirthForm() {
         displayName: name,
         birthDate: date,
         birthTime: noTime ? null : time,
-        birthPlace: place.label,
-        lat: place.lat,
-        lng: place.lng,
-        tz: place.tz,
+        birthPlace: chosen.label,
+        lat: chosen.lat,
+        lng: chosen.lng,
+        tz: chosen.tz,
       });
       router.push("/onboarding/chronotype");
     } catch {

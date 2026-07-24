@@ -55,8 +55,8 @@ export default async function TodayPage() {
             <span className="font-accent italic text-clay">{firstName}</span>
           </h1>
         </div>
-        <div className="flex items-center gap-2.5 pt-1">
-          <Pill>
+        <div className="flex shrink-0 items-center gap-2.5 pt-1">
+          <Pill className="whitespace-nowrap">
             <SparkleIcon size={10} className="text-gold" /> {ctx.karma} karma
             {ctx.streak.current > 0 && ` · ${ctx.streak.current}-day streak`}
           </Pill>

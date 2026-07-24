@@ -50,8 +50,9 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
         return;
       }
     }
-    router.push(next);
-    router.refresh();
+    // Hard navigation so the auth cookie is guaranteed on the first server
+    // render — avoids the router-cache flash between sign-in and the app.
+    window.location.assign(next);
   }
 
   async function withGoogle() {

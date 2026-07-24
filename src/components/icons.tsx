@@ -256,19 +256,21 @@ export const PLANET_GLYPHS: Record<string, string> = {
   NorthNode: "☊",
 };
 
+// U+FE0E forces monochrome text presentation — without it these render as
+// colored emoji on macOS/iOS instead of the design's gold glyphs.
 export const SIGN_GLYPHS: Record<string, string> = {
-  Aries: "♈",
-  Taurus: "♉",
-  Gemini: "♊",
-  Cancer: "♋",
-  Leo: "♌",
-  Virgo: "♍",
-  Libra: "♎",
-  Scorpio: "♏",
-  Sagittarius: "♐",
-  Capricorn: "♑",
-  Aquarius: "♒",
-  Pisces: "♓",
+  Aries: "♈︎",
+  Taurus: "♉︎",
+  Gemini: "♊︎",
+  Cancer: "♋︎",
+  Leo: "♌︎",
+  Virgo: "♍︎",
+  Libra: "♎︎",
+  Scorpio: "♏︎",
+  Sagittarius: "♐︎",
+  Capricorn: "♑︎",
+  Aquarius: "♒︎",
+  Pisces: "♓︎",
 };
 
 export const ASPECT_GLYPHS: Record<string, string> = {

@@ -88,8 +88,10 @@ export default async function PlannerPage({
       <header className="rise flex items-end justify-between gap-4">
         <div>
           <Eyebrow>
-            {selectedDate === today ? "Your plan" : "Week of"}{" "}
-            {weekStart.toFormat("LLLL d").toUpperCase()}
+            Your plan ·{" "}
+            {DateTime.fromISO(selectedDate, { zone: tz })
+              .toFormat("LLLL d")
+              .toUpperCase()}
           </Eyebrow>
           <h1 className="mt-1.5 font-display text-[28px] font-bold text-ink lg:text-[34px]">
             <span className="hidden lg:inline">A week, timed to the sky</span>

@@ -123,7 +123,7 @@ export function BirthForm() {
         I don&apos;t know my birth time
       </label>
 
-      <div className="rise d5 relative">
+      <div className="rise d5 relative z-20">
         <span className={label}>Place of birth</span>
         <input
           className={field}

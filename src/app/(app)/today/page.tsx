@@ -7,7 +7,8 @@ import { AiDisclosure, Eyebrow, Pill } from "@/components/ui";
 import { MoonDial, OrbitRing } from "@/components/motion";
 import { NudgeList } from "@/components/today/nudges";
 import { MoodCheckin } from "@/components/today/mood";
-import { ArrowRightIcon, SparkleIcon, PLANET_GLYPHS } from "@/components/icons";
+import { ArrowRightIcon, SparkleIcon, PLANET_GLYPHS, SIGN_GLYPHS } from "@/components/icons";
+import { windowReasonNotes } from "@/lib/astro/notes";
 
 export const metadata = { title: "Today" };
 
@@ -112,6 +113,11 @@ export default async function TodayPage() {
                 <p className="mt-1 text-[11.5px] font-semibold text-gold-dark">
                   {card.power_blurb ?? "Start things. Ask. Send."}
                 </p>
+                {windowReasonNotes(power.reasons).length > 0 && (
+                  <p className="mt-2 border-t border-[rgba(176,137,71,.22)] pt-2 text-[10.5px] leading-relaxed text-gold-dusty">
+                    {windowReasonNotes(power.reasons).join(" · ")}
+                  </p>
+                )}
               </div>
             ) : (
               <div className="rounded-[20px] border border-line bg-surface p-5">
@@ -134,9 +140,28 @@ export default async function TodayPage() {
                 <p className="mt-1 text-[11.5px] font-semibold text-clay">
                   {card.friction_blurb ?? "Hold signatures and launches."}
                 </p>
+                {windowReasonNotes(friction.reasons).length > 0 && (
+                  <p className="mt-2 border-t border-[rgba(192,90,59,.2)] pt-2 text-[10.5px] leading-relaxed text-clay/80">
+                    {windowReasonNotes(friction.reasons).join(" · ")}
+                  </p>
+                )}
               </div>
             )}
           </section>
+
+          {/* Void-of-course alert */}
+          {sky.moon.voidOfCourse && (
+            <section className="rise d4 flex items-center gap-3 rounded-[16px] border border-line-soft bg-surface-alt px-4 py-3">
+              <span className="text-[15px] text-gold">☽</span>
+              <p className="text-[11.5px] leading-relaxed text-body">
+                <span className="font-bold text-ink">Moon void of course</span>{" "}
+                {fmtW(sky.moon.voidOfCourse.startUtc, tz)} –{" "}
+                {fmtW(sky.moon.voidOfCourse.endUtc, tz)} — drift, don&apos;t
+                launch. She enters {SIGN_GLYPHS[sky.moon.voidOfCourse.ingressSign]}{" "}
+                {sky.moon.voidOfCourse.ingressSign} after.
+              </p>
+            </section>
+          )}
 
           {/* Nudges */}
           <section className="rise d4">

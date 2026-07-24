@@ -34,6 +34,44 @@ export function placementNote(b: PlacedBody): string {
   return PLANET_NOTES[b.body]?.(domain) ?? domain;
 }
 
+const ASPECT_SYMBOL: Record<string, string> = {
+  conjunction: "☌",
+  sextile: "⚹",
+  square: "□",
+  trine: "△",
+  opposition: "☍",
+};
+
+/**
+ * Translate TimeWindow machine reason codes into short human chips,
+ * e.g. "Venus hour", "Moon △ your Sun", "Moon void of course".
+ */
+export function windowReasonNotes(reasons: string[]): string[] {
+  const out: string[] = [];
+  for (const r of reasons) {
+    if (r.startsWith("hour_ruler_is_chart_ruler:")) {
+      out.push(`${r.split(":")[1]} hour — your chart ruler`);
+    } else if (r.startsWith("hour_ruler_")) {
+      out.push(`${r.split(":")[1]} hour`);
+    } else if (r === "moon_void_of_course") {
+      out.push("Moon void of course");
+    } else if (r.startsWith("moon_")) {
+      const m = r.match(/^moon_(\w+)_natal_(\w+)$/);
+      if (m) {
+        const sym = ASPECT_SYMBOL[m[1]] ?? m[1];
+        out.push(`Moon ${sym} your ${m[2] === "Ascendant" ? "rising" : m[2]}`);
+      }
+    }
+  }
+  // de-dup, and let "X hour — your chart ruler" absorb its plain "X hour" chip
+  const unique = [...new Set(out)];
+  const deduped = unique.filter(
+    (chip) =>
+      !unique.some((other) => other !== chip && other.startsWith(`${chip} — `)),
+  );
+  return deduped.slice(0, 3);
+}
+
 export function transitNote(t: TransitAspect): string {
   switch (t.type) {
     case "trine":

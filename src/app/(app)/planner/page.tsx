@@ -8,6 +8,7 @@ import { TaskCard, type TaskRow } from "@/components/planner/task-item";
 import { NewTaskButton } from "@/components/planner/new-task";
 import { cn, compactTime } from "@/lib/utils";
 import type { TimeWindow } from "@/lib/astro";
+import { windowReasonNotes } from "@/lib/astro/notes";
 
 export const metadata = { title: "Planner" };
 
@@ -105,7 +106,10 @@ export default async function PlannerPage({
             {selectedSky.moon.phaseName} in {selectedSky.moon.sign}
           </p>
         </div>
-        <NewTaskButton defaultDate={selectedDate} variant="button" />
+        {/* Mobile uses the FAB — one entry point, no wrapped button */}
+        <div className="hidden sm:block">
+          <NewTaskButton defaultDate={selectedDate} variant="button" />
+        </div>
       </header>
 
       {/* ── Mobile day selector ── */}
@@ -161,7 +165,9 @@ export default async function PlannerPage({
             >
               {item.window.kind === "power" ? "Power window" : "Friction"} ·{" "}
               {fmtBand(item.window, tz)}
-              {item.window.kind === "friction" && " — hold decisions"}
+              {" — "}
+              {windowReasonNotes(item.window.reasons)[0] ??
+                (item.window.kind === "power" ? "start things" : "hold decisions")}
             </div>
           ) : (
             <div key={item.task.id} className={`rise d${Math.min(i + 2, 12)}`}>

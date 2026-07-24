@@ -111,6 +111,7 @@ export default async function ChartPage() {
                     </span>
                     <span className="tnum shrink-0 text-[11px] font-bold text-faint">
                       {Math.floor(b.degree)}°
+                      {String(Math.round((b.degree % 1) * 60)).padStart(2, "0")}′
                     </span>
                   </div>
                 ),
